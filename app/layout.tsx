@@ -8,9 +8,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next"; // Import SpeedInsi
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Agent42",
-  description: "OpenAI Assistant",
-  metadataBase: 'https://mydomain.com'
+  title: "PACRI Asthma Interview",
+  description: "PACRI Asthma Interview"
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
