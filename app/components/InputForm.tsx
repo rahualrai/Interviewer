@@ -118,17 +118,6 @@ return (
           className="w-full pr-20 pl-1 focus:outline-none" 
           disabled={disabled || !chatStarted}
         />
-        <label 
-          htmlFor="file-upload" 
-          className={clsx(
-            "absolute inset-y-0 left-3 my-auto flex h-8 w-8 items-center justify-center rounded-md transition-all",
-            disabled || !chatStarted || isSending
-              ? "cursor-not-allowed bg-gray-300"
-              : "bg-blue-500 hover:bg-blue-600",
-          )}
-        >
-          <span className="text-white text-lg">+</span>
-        </label>
         <button
           className={clsx(
             "absolute inset-y-0 right-3 my-auto flex h-8 w-8 items-center justify-center rounded-md transition-all",
