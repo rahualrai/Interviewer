@@ -11,6 +11,7 @@ type FileDetail = {
 
 export const useChatState = () => {
   
+  const [initialThreadMessage, setInitialThreadMessage] = useState('Introduce yourself and ask for the participants name and age.');
   
   const [assistantName, setAssistantName] = useState('');
   const [assistantModel, setAssistantModel] = useState('gpt-3.5-turbo-1106');
@@ -23,7 +24,6 @@ export const useChatState = () => {
   const [threadId, setThreadId] = useState<string | null>(null);
   const [isStartLoading, setStartLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [initialThreadMessage, setInitialThreadMessage] = useState('You are a Pirate! introduce yourself');
   const [statusMessage, setStatusMessage] = useState('');
   const counter = useRef(0);
   const inputRef = useRef(null);
