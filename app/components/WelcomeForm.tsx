@@ -1,3 +1,5 @@
+// app/components/WelcomForm.tsx
+
 import { LoadingCircle } from '../icons';
 import React, { useState, useEffect } from 'react';
 import UploadFiles_Configure from './UploadFiles_Component';

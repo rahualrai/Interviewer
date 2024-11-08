@@ -2,7 +2,8 @@
 
 "use client";
 
-import { LinkBar, MessageList, WelcomeForm, InputForm } from './components';
+import React, { useState } from 'react'; // Import useState
+import { LinkBar, MessageList, ConsentForm, InputForm } from './components';
 import { useChatState, useChatManager, useStartAssistant } from './hooks';
 
 export default function Chat() {
@@ -33,6 +34,9 @@ export default function Chat() {
     chatFileDetails, setChatFileDetails,
     fileIds, setFileIds,
   } = useChatState();
+
+  // Define the consentAccepted state
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   useChatManager(setChatMessages, setStatusMessage, setChatManager, setIsMessageLoading, setProgress, setIsLoadingFirstMessage);
   useStartAssistant(assistantId, chatManager, initialThreadMessage);
@@ -65,12 +69,43 @@ export default function Chat() {
 
   return (
     <main className="flex flex-col items-center justify-between pb-40 bg-space-grey-light">
-      {chatHasStarted || assistantId || isLoadingFirstMessage  ? (
-        <MessageList chatMessages={chatMessages} statusMessage={statusMessage} isSending={isSending} progress={progress} isFirstMessage={isLoadingFirstMessage} fileDetails={chatFileDetails} />
-      ) : (
-        <WelcomeForm {...{assistantName, setAssistantName, assistantDescription, setAssistantDescription, assistantModel, setAssistantModel, startChatAssistant, isButtonDisabled, isStartLoading, statusMessage, fileIds, setFileIds}} />
+      {!consentAccepted && (
+        <ConsentForm onConsentAccepted={() => setConsentAccepted(true)} />
       )}
-      <InputForm {...{input: inputmessage, setInput: setInputmessage, inputRef, formRef, disabled: isButtonDisabled || !chatManager, chatStarted: chatMessages.length > 0, isSending, isLoading: isMessageLoading, chatUploadedFiles, setChatUploadedFiles, chatFileDetails, setChatFileDetails, chatManager, setChatStarted, setChatMessages, setStatusMessage, setIsSending, setProgress, setIsLoadingFirstMessage}} />
+      
+      {(consentAccepted && (chatHasStarted || assistantId || isLoadingFirstMessage)) && (
+        <>
+        <MessageList 
+          chatMessages={chatMessages} 
+          statusMessage={statusMessage} 
+          isSending={isSending} 
+          progress={progress} 
+          isFirstMessage={isLoadingFirstMessage} 
+          fileDetails={chatFileDetails} 
+        />
+        <InputForm
+          input={inputmessage}
+          setInput={setInputmessage}
+          inputRef={inputRef}
+          formRef={formRef}
+          disabled={isButtonDisabled || !chatManager}
+          chatStarted={chatMessages.length > 0}
+          isSending={isSending}
+          isLoading={isMessageLoading}
+          chatUploadedFiles={chatUploadedFiles}
+          setChatUploadedFiles={setChatUploadedFiles}
+          chatFileDetails={chatFileDetails}
+          setChatFileDetails={setChatFileDetails}
+          chatManager={chatManager}
+          setChatStarted={setChatStarted}
+          setChatMessages={setChatMessages}
+          setStatusMessage={setStatusMessage}
+          setIsSending={setIsSending}
+          setProgress={setProgress}
+          setIsLoadingFirstMessage={setIsLoadingFirstMessage}
+        />
+      </>
+      )}
     </main>
   );
 }
