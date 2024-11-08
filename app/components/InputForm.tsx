@@ -115,17 +115,8 @@ return (
             }
           }}
           spellCheck={false}
-          className="w-full pr-20 pl-10 focus:outline-none" 
+          className="w-full pr-20 pl-1 focus:outline-none" 
           disabled={disabled || !chatStarted}
-        />
-        <input
-          type="file"
-          id="file-upload"
-          style={{ display: 'none' }}
-          onChange={handleChatFilesUpload}
-          disabled={disabled || !chatStarted || isSending}
-          multiple
-          accept=".c,.cpp,.csv,.docx,.html,.java,.json,.md,.pdf,.pptx,.txt,.tex,image/jpeg,image/png"
         />
         <label 
           htmlFor="file-upload" 
