@@ -11,7 +11,7 @@ type FileDetail = {
 
 export const useChatState = () => {
   
-  const [initialThreadMessage, setInitialThreadMessage] = useState('Introduce yourself and ask for the participants name and age.');
+  const [initialThreadMessage, setInitialThreadMessage] = useState('Introduce with the purpose of the interview and also the overview of the interview process. Also, mention the estimated time of the interview and the confidentiality of the interview. ');
   
   const [assistantName, setAssistantName] = useState('');
   const [assistantModel, setAssistantModel] = useState('gpt-3.5-turbo-1106');
