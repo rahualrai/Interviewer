@@ -69,7 +69,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({ onConsentAccepted }) => {
       ...prev,
       [name]:
         ["age", "householdSize", "membersUnder18"].includes(name) &&
-        value === ""
+        (value === "" || isNaN(Number(value)))
           ? ""
           : ["age", "householdSize", "membersUnder18"].includes(name)
           ? Number(value)
@@ -79,11 +79,11 @@ const ConsentForm: React.FC<ConsentFormProps> = ({ onConsentAccepted }) => {
 
   const handleMultipleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    field: string
+    field: keyof DemographicsData
   ) => {
     const { value, checked } = e.target;
     setDemographics((prev) => {
-      const currentValues = prev[field as keyof DemographicsData] as string[];
+      const currentValues = (prev[field as keyof DemographicsData] ?? []) as string[];
       if (checked) {
         // Add the value if the checkbox is checked
         return { ...prev, [field]: [...currentValues, value] };
@@ -99,12 +99,12 @@ const ConsentForm: React.FC<ConsentFormProps> = ({ onConsentAccepted }) => {
 
   const handleSubmit = () => {
     if (
-      demographics.age === '' ||
-      demographics.age <= 0 ||
-      demographics.householdSize === '' ||
-      demographics.householdSize <= 0 ||
-      demographics.membersUnder18 === '' ||
-      demographics.membersUnder18 < 0 ||
+      !demographics.age ||
+      Number(demographics.age) <= 0 ||
+      !demographics.householdSize ||
+      Number(demographics.householdSize) <= 0 ||
+      !demographics.membersUnder18 ||
+      Number(demographics.membersUnder18) < 0 ||
       !demographics.gender ||
       !demographics.occupation ||
       !demographics.relationship ||
@@ -261,18 +261,19 @@ const ConsentForm: React.FC<ConsentFormProps> = ({ onConsentAccepted }) => {
               </div>
 
               {/* Occupation Field */}
-<div>
-  <label className="block text-sm font-medium text-gray-700">Occupation</label>
-  <input
-    type="text"
-    name="occupation"
-    value={demographics.occupation}
-    onChange={handleChange}
-    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-    required
-  />
-</div>
-
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Occupation
+                </label>
+                <input
+                  type="text"
+                  name="occupation"
+                  value={demographics.occupation}
+                  onChange={handleChange}
+                  className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
 
               {/* Relationship Field */}
               <div>
