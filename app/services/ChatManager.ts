@@ -12,6 +12,8 @@ import {
   updateChatState
 } from '../modules/chatModules';
 
+import axios from "axios";
+
 /**
  * Interface for the state of the chat
  */
@@ -71,6 +73,16 @@ class ChatManager {
       this.instance = new ChatManager(setChatMessages, setStatusMessage, setProgress, setIsLoadingFirstMessage); // And here
     }
     return this.instance;
+  }
+
+  static async generateChatSummary(chatContent: string): Promise<string> {
+    try {
+      const response = await axios.post("/api/generate-summary", { chat: chatContent });
+      return response.data.summary;
+    } catch (error) {
+      console.error("Error generating summary:", error);
+      throw new Error("Failed to generate summary.");
+    }
   }
 
   // Method to start the assistant

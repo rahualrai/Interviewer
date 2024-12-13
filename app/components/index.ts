@@ -3,3 +3,5 @@ export { default as MessageList } from './MessageList';
 export { default as WelcomeForm } from './WelcomeForm';
 export { default as InputForm } from './InputForm';
 export { default as ConsentForm } from './ConsentForm';
+export { default as DemographicsForm } from './DemographicsForm';
+export { default as EndPage } from './EndPage';

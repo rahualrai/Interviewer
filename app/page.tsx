@@ -3,7 +3,7 @@
 "use client";
 
 import React, { useState } from 'react'; // Import useState
-import { LinkBar, MessageList, ConsentForm, InputForm } from './components';
+import { LinkBar, MessageList, ConsentForm, InputForm, DemographicsForm, EndPage } from './components';
 import { useChatState, useChatManager, useStartAssistant } from './hooks';
 
 export default function Chat() {
@@ -37,9 +37,23 @@ export default function Chat() {
 
   // Define the consentAccepted state
   const [consentAccepted, setConsentAccepted] = useState(false);
+  const [chatCompleted, setChatCompleted] = useState(false);
+  const [summaryGenerated, setSummaryGenerated] = useState(false);
 
   useChatManager(setChatMessages, setStatusMessage, setChatManager, setIsMessageLoading, setProgress, setIsLoadingFirstMessage);
   useStartAssistant(assistantId, chatManager, initialThreadMessage);
+
+  const handleEndChat = () => {
+    setChatCompleted(true);
+  };
+
+  const handleSummaryGenerated = () => {
+    setSummaryGenerated(true);
+  };
+
+  const handleDemographicsSubmit = (data: { age: number; phoneNumber: string }) => {
+    console.log("Demographics Submitted:", data);
+  };
 
   const startChatAssistant = async () => {
     setIsButtonDisabled(true);
@@ -73,7 +87,7 @@ export default function Chat() {
         <ConsentForm onConsentAccepted={() => setConsentAccepted(true)} />
       )}
       
-      {(consentAccepted && (chatHasStarted || assistantId || isLoadingFirstMessage)) && (
+      {consentAccepted && !chatCompleted && (
         <>
         <MessageList 
           chatMessages={chatMessages} 
@@ -104,7 +118,25 @@ export default function Chat() {
           setProgress={setProgress}
           setIsLoadingFirstMessage={setIsLoadingFirstMessage}
         />
+        <button
+          type="button"
+          onClick={handleEndChat}
+          className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+        >
+          End Chat
+        </button>
       </>
+      )}
+      
+      {chatCompleted && !summaryGenerated && (
+        <EndPage 
+          chatMessages={chatMessages} 
+          onSummaryGenerated={handleSummaryGenerated} 
+        />
+      )}
+
+      {summaryGenerated && (
+        <DemographicsForm onSubmit={handleDemographicsSubmit} />
       )}
     </main>
   );
