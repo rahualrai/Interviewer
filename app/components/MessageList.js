@@ -1,14 +1,18 @@
-// MessageList.js
+// app/components/MessageList.js
+import React, { useEffect, useRef } from "react";
 import clsx from "clsx";
 import { Bot, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ImageIcon, DocumentIcon } from '../icons';
 
-// Message component to display individual messages
-const Message = ({ message, progress, isFirstMessage, fileDetails }) => {
+/**
+ * Message component to display individual messages
+ */
+const Message = React.forwardRef(({ message, progress, isFirstMessage, fileDetails }, ref) => {
   return (
     <div
+      ref={ref}
       className={clsx(
         "flex w-full items-center justify-center border-b border-gray-200 py-8",
         message.role === "user" ? "bg-white" : "bg-gray-100"
@@ -58,10 +62,21 @@ const Message = ({ message, progress, isFirstMessage, fileDetails }) => {
       </div>
     </div>
   );
-};
+});
+Message.displayName = 'Message';
 
-// MessageList component to display a list of messages
+/**
+ * MessageList component to display a list of messages
+ */
 const MessageList = ({ chatMessages, statusMessage, isSending, progress, isFirstMessage, fileDetails }) => {
+  const latestMessageRef = useRef(null);
+
+  useEffect(() => {
+    if (latestMessageRef.current) {
+      latestMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [chatMessages]);
+
   let messages = [...chatMessages];
 
   // Add a loading message when the site loads and isFirstMessage is true
@@ -103,9 +118,19 @@ const MessageList = ({ chatMessages, statusMessage, isSending, progress, isFirst
           </div>
         </div>
       )}
-      {messages.map((message, i) => (
-        <Message key={i} message={message} progress={progress} isFirstMessage={isFirstMessage && i === 0} fileDetails={message.fileDetails} />
-      ))}
+      {messages.map((message, i) => {
+        const isLastMessage = i === messages.length - 1;
+        return (
+          <Message
+            key={i}
+            ref={isLastMessage ? latestMessageRef : null}
+            message={message}
+            progress={progress}
+            isFirstMessage={isFirstMessage && i === 0}
+            fileDetails={message.fileDetails}
+          />
+        );
+      })}
     </>
   );
 };

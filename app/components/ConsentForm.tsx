@@ -1,5 +1,5 @@
 // app/components/ConsentForm.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface ConsentFormProps {
   onConsentAccepted: () => void;
@@ -16,6 +16,10 @@ const ConsentForm: React.FC<ConsentFormProps> = ({ onConsentAccepted }) => {
     }));
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentStep]);
+  
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({
@@ -41,14 +45,15 @@ const ConsentForm: React.FC<ConsentFormProps> = ({ onConsentAccepted }) => {
       <div className="flex flex-col space-y-4 p-7 sm:p-10">
         {currentStep === 1 && (
           <div>
-            <h1 className="text-lg font-semibold text-black">Introduction</h1>
+            <img
+              src="/pictures/banner_2.jpeg"
+              alt="Banner"
+              className="w-full h-auto object-contain rounded-md mb-4"
+            />
+            <h1 className="text-lg font-bold text-black text-center">Improving the Health of Asthmatic Children</h1>
             <div className="mt-4">
               <p className="text-sm text-gray-700">
-                Welcome! This project is a collaboration between the Princeton
-                Alliance for Collaborative Research and Innovation (PACRI) and
-                the Howard University School of Social Work. We are conducting a
-                study to better understand user experiences and improve
-                community programs. Your participation is greatly appreciated.
+                Hello! We want to learn about your experiences so we can help make community programs better for everyone. Thank you so much for sharing your time and thoughts with us. We truly appreciate it!
               </p>
               <div className="mt-4 flex space-x-4">
                 <div className="flex-1">
