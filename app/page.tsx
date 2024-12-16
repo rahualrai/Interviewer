@@ -91,9 +91,7 @@ export default function Chat() {
       
       {consentAccepted && !chatCompleted && (
         <>
-
-        <LinkBar onEndChat={handleEndChat} />
-        
+       
         <MessageList 
           chatMessages={chatMessages} 
           statusMessage={statusMessage} 
@@ -123,6 +121,7 @@ export default function Chat() {
           setIsSending={setIsSending}
           setProgress={setProgress}
           setIsLoadingFirstMessage={setIsLoadingFirstMessage}
+          onEndChat={handleEndChat}
         />
 
       </>
