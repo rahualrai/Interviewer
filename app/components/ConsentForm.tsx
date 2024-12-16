@@ -50,7 +50,7 @@ const ConsentForm: React.FC<ConsentFormProps> = ({ onConsentAccepted }) => {
               alt="Banner"
               className="w-full h-auto object-contain rounded-md mb-4"
             />
-            <h1 className="text-lg font-bold text-black text-center">Improving the Health of Asthmatic Children</h1>
+            <h1 className="text-lg font-bold text-black text-center">Improving the Health of Children with Asthma in Public Housing</h1>
             <div className="mt-4">
               <p className="text-sm text-gray-700">
                 Hello! We want to learn about your experiences so we can help make community programs better for everyone. Thank you so much for sharing your time and thoughts with us. We truly appreciate it!
@@ -134,16 +134,19 @@ const ConsentForm: React.FC<ConsentFormProps> = ({ onConsentAccepted }) => {
                     "If you have any questions or concerns about this chatbot-based interview, please contact Dr. Meirong Liu at meirong.liu@howard.edu or (202) 716-9712. For IRB-related questions, contact the Howard University Institutional Review Board at (202) 865-8597.",
                 },
               ].map((section) => (
-                <div
-                  key={section.key}
-                  className="bg-white border rounded-md p-3 shadow-sm cursor-pointer"
-                  onClick={() => toggleSection(section.key)}
-                >
-                  <h2 className="font-medium text-gray-900">{section.label}</h2>
+                <div key={section.key} className="bg-white border rounded-md p-3 shadow-sm cursor-pointer">
+                  <div className="flex justify-between items-center">
+                    <h2 className="font-medium text-gray-900">{section.label}</h2>
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(section.key)}
+                      className="text-blue-500 hover:underline text-sm px-2 py-1"
+                    >
+                      {expandedSections[section.key] ? 'Less...' : 'More...'}
+                    </button>
+                  </div>
                   <p className="mt-2 text-sm text-gray-700">
-                    {expandedSections[section.key]
-                      ? section.detailed
-                      : section.summary}
+                    {expandedSections[section.key] ? section.detailed : section.summary}
                   </p>
                 </div>
               ))}
