@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     console.log('Received chat content for summary generation');
 
     // Define the prompt for OpenAI to generate a summary
-    const promptText = `Summarize the following user messages only, excluding any system or assistant responses. Focus on the key points mentioned by the user and write in simple English:\n\n${chat}\n\nSummary:`;
+    const promptText = `Summarize the following user messages only, focusing on the essential points shared by the user. Exclude system or assistant responses, avoid unnecessary repetition, and write in clear, concise sentences. If user has not provided any message, just respond with "None". Emphasize actionable insights or unique feedback provided by the user. Write a short one and in simple English:\n\n${chat}\n\nSummary:`;
 
     // Log the chosen prompt
     console.log(`Using prompt: ${promptText}`);
