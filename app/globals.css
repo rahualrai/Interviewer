@@ -83,3 +83,8 @@
 html {
   font-size: 125%;
 }
+
+/* app/globals.css */
+body {
+  @apply bg-gray-100;
+}
