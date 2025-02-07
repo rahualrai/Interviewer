@@ -5,7 +5,6 @@ interface DemographicsFormProps {
   onSubmit: (data: DemographicsData) => void;
 }
 
-// You can extend this interface with all the new fields:
 interface DemographicsData {
   age: number;
   relationshipWithChild: string;
@@ -13,14 +12,14 @@ interface DemographicsData {
   hispanicLatinoSpanish: string[];  // Multiple selections
   race: string[];                   // Multiple selections
   highestGrade: string;
-  housingStatus: string[];          // Multiple selections
-  householdBudget?: string;         // Could be a number or string range
+  housingStatus: string[];          
+  householdBudget?: number;         // Could be a number or string range
   householdBudgetExact?: number;    // Optionally store exact amount if entered
-  householdReceived: string[];      // Multiple selections
+  householdReceived: string[];      
   maritalStatus: string;
   householdSize: number;
   householdUnder18: number;
-  occupationalStatus: string[];     // Multiple selections
+  occupationalStatus: string[];     
   phoneNumber: string;
 }
 
@@ -41,7 +40,7 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
   const [occupationalStatus, setOccupationalStatus] = useState<string[]>([]);
 
   const [highestGrade, setHighestGrade] = useState<string>("");
-  const [householdBudget, setHouseholdBudget] = useState<string>("");        // If they select from a range
+  const [householdBudget, setHouseholdBudget] = useState<number>(0);        // If they select from a range
   const [householdBudgetExact, setHouseholdBudgetExact] = useState<number>(); // If they enter exact amount
   const [maritalStatus, setMaritalStatus] = useState<string>("");
   const [householdSize, setHouseholdSize] = useState<number>(0);
@@ -102,9 +101,10 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               type="number"
               id="age"
               value={age}
+              placeholder="Enter your age"
               onChange={(e) => setAge(Number(e.target.value))}
               onWheel={(e) => e.preventDefault()}
-              required
+            
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             />
 
@@ -119,7 +119,7 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               id="relationshipWithChild"
               value={relationshipWithChild}
               onChange={(e) => setRelationshipWithChild(e.target.value)}
-              required
+            
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             >
               <option value="">Select</option>
@@ -139,7 +139,7 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               id="gender"
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              required
+            
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             >
               <option value="">Select</option>
@@ -210,7 +210,7 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               id="highestGrade"
               value={highestGrade}
               onChange={(e) => setHighestGrade(e.target.value)}
-              required
+            
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             >
               <option value="">Select</option>
@@ -257,10 +257,10 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               <input
                 type="number"
                 id="householdBudget"
-                value={householdSize}
-                onChange={(e) => setHouseholdSize(Number(e.target.value))}
+                value={householdBudget}
+                onChange={(e) => setHouseholdBudget(Number(e.target.value))}
                 onWheel={(e) => e.preventDefault()}
-                required
+              
                 className="mt-1 p-2 border border-gray-300 rounded-md w-full"
               />
 
@@ -300,7 +300,7 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               id="maritalStatus"
               value={maritalStatus}
               onChange={(e) => setMaritalStatus(e.target.value)}
-              required
+            
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             >
               <option value="">Select</option>
@@ -323,7 +323,7 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               value={householdSize}
               onChange={(e) => setHouseholdSize(Number(e.target.value))}
               onWheel={(e) => e.preventDefault()}
-              required
+            
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             />
           </div>
@@ -339,7 +339,7 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               value={householdUnder18}
               onChange={(e) => setHouseholdUnder18(Number(e.target.value))}
               onWheel={(e) => e.preventDefault()}
-              required
+            
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             />
           </div>
@@ -383,7 +383,7 @@ const DemographicsForm: React.FC<DemographicsFormProps> = ({ onSubmit }) => {
               id="phoneNumber"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              required
+            
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             />
           </div>
