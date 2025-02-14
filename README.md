@@ -37,13 +37,9 @@ The project includes a web-based user interface, API routes for processing chat 
 
 ### 3.1 Prerequisites
 - Node.js (version 14.x or above)
-- npm or yarn package manager
+- npm
 
-### 3.2 System Requirements
-- A modern browser supporting ES6+
-- Internet connection (to access OpenAI API)
-
-### 3.3 Installation Steps
+### 3.2 Installation Steps
 1. Clone the repository.
 2. Run `npm install` to install dependencies.
 3. Set up environment variables using `.env` (see [`.env.example`](.env.example)).
