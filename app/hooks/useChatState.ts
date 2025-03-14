@@ -14,7 +14,7 @@ export const useChatState = () => {
   const [initialThreadMessage, setInitialThreadMessage] = useState('Introduce with the purpose of the interview and also the overview of the interview process. Also, mention the estimated time of the interview and the confidentiality of the interview. ');
   
   const [assistantName, setAssistantName] = useState('');
-  const [assistantModel, setAssistantModel] = useState('gpt-3.5-turbo-1106');
+  const [assistantModel, setAssistantModel] = useState('gpt-o3-mini');
   const [assistantDescription, setAssistantDescription] = useState('');
   const [inputmessage, setInputmessage] = useState('');
   const [chatMessages, setChatMessages] = useState<{ role: string; content: any; }[]>([]);
@@ -64,7 +64,5 @@ export const useChatState = () => {
     chatUploadedFiles, setChatUploadedFiles,
     chatFileDetails, setChatFileDetails,
     fileIds, setFileIds,
-    
-
   };
 };

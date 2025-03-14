@@ -87,11 +87,13 @@ class ChatManager {
 
   // Method to start the assistant
   async startAssistant(assistantDetails: any, fileIds: string[], initialMessage: string): Promise<void> {
-    console.log('Starting assistant...');
-    
+    console.log('Starting assistant with details:', assistantDetails);
+    console.log('File IDs:', fileIds);
+    console.log('Initial Message:', initialMessage);
+
     this.state.setStatusMessage('Initializing chat assistant...');
     this.state.isLoading = true;
-    
+
     try {
 
     
@@ -102,7 +104,7 @@ class ChatManager {
         throw new Error('AssistantId is null');
       }
       this.state.setStatusMessage('Assistant created...');
-  
+
       // Create the chat thread
       this.state.setStatusMessage('Creating thread...');
       this.state.assistantId = assistantId;
@@ -111,7 +113,7 @@ class ChatManager {
         throw new Error('ThreadId is null');
       }
       this.state.setStatusMessage('Received thread_ID...');
-  
+
       // Run the assistant
       this.state.setStatusMessage('Running assistant...');
       this.state.threadId = threadId;
@@ -119,31 +121,31 @@ class ChatManager {
       if (runId === null) {
         throw new Error('RunId is null');
       }
-      
+
       // Store the run ID
-      this.state.runId = runId; 
+      this.state.runId = runId;
       this.state.setStatusMessage('Received Run_ID..');
-  
+
       // Fetch the assistant's response
       if (this.state.runId && this.state.threadId) {
         const runId = this.state.runId as string;
         const threadId = this.state.threadId as string;
         this.state.setStatusMessage('checking status...');
         const response = await fetchAssistantResponse(
-          this.state.runId as string, 
-          this.state.threadId as string, 
-          this.state.setStatusMessage, 
+          this.state.runId as string,
+          this.state.threadId as string,
+          this.state.setStatusMessage,
           this.state.setProgress,
           40 // initialProgress
-        );        
+        );
         this.state.setStatusMessage('Run complete...');
         this.state.assistantResponseReceived = true;
         this.state.setStatusMessage('Received messages...');
-        
+
         // Add the assistant's response to the messages
         const newMessage = { role: 'assistant', content: response };
         this.state.setStatusMessage('Adding messages to chat...');
-        
+
         this.state.messages = [...this.state.messages, newMessage];
         this.state.setChatMessages(this.state.messages);
 
