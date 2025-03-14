@@ -22,6 +22,7 @@ This project provides an AI-powered chat assistant that conducts semi-structured
 - **Backend:** API routes to process chat messages and interface with the OpenAI API.
 - **Modules:** Business logic for managing assistant interactions.
 
+<<<<<<< HEAD
 ---
 
 ### 2. System Overview
@@ -56,6 +57,17 @@ This project provides an AI-powered chat assistant that conducts semi-structured
    git clone https://github.com/yourusername/llm-interview-tool.git
    cd llm-interview-tool
    ```
+=======
+### 3.1 Prerequisites
+- Node.js (version 14.x or above)
+- npm
+
+### 3.2 Installation Steps
+1. Clone the repository.
+2. Run `npm install` to install dependencies.
+3. Set up environment variables using `.env` (see [`.env.example`](.env.example)).
+4. Run `npm run dev` to start the development server.
+>>>>>>> 33ebc4f686393558eaeb61bc334c516ccca43973
 
 2. **Install Dependencies:**
    ```bash
