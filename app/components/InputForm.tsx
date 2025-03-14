@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { playVoiceResponse } from '../api/voiceResponse/route';
+import { useEffect, useState, useRef } from 'react';
 import clsx from 'clsx';
 import Textarea from 'react-textarea-autosize';
 import { SendIcon, LoadingCircle, DocumentIcon, XIcon, ImageIcon } from '../icons';
@@ -49,6 +50,31 @@ const InputForm: React.FC<Props> = ({
   setIsLoadingFirstMessage,
   onEndChat,
 }) => {
+    const [isSpeakerOn, setIsSpeakerOn] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    // Recording state and refs for the MediaRecorder
+    const [isRecording, setIsRecording] = useState(false);
+    const recordingDeleteRef = useRef<boolean>(false);
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const recordedChunksRef = useRef<Blob[]>([]);  
+
+    useEffect(() => {
+      if (!chatManager || !isSpeakerOn) return;
+      const messages = chatManager?.state?.messages || [];
+      if (messages.length > 0) {
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.role === 'assistant' && lastMessage.content) {
+          (async () => {
+            setIsSpeaking(true);
+            await playVoiceResponse(lastMessage.content);
+            setIsSpeaking(false);
+          })();
+        }
+      }
+    }, [chatManager?.state?.messages, isSpeakerOn]);
+
+  
+
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isSending) return;
@@ -68,6 +94,71 @@ const InputForm: React.FC<Props> = ({
       } finally {
         setIsSending(false);
       }
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      recordedChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        if (recordingDeleteRef.current) {
+          // Discard recording
+          recordedChunksRef.current = [];
+          recordingDeleteRef.current = false;
+        } else {
+          const audioBlob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
+          transcribeAudio(audioBlob);
+        }
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error("Error starting recording:", error);
+    }
+  };
+
+  // Remove the old stopRecording as we now control stopping via approve/delete
+  const approveRecording = () => {
+    // Approve: stop and transcribe recording.
+    recordingDeleteRef.current = false;
+    mediaRecorderRef.current?.stop();
+    setIsRecording(false);
+  };
+
+  const deleteRecording = () => {
+    // Delete: stop recording and discard.
+    recordingDeleteRef.current = true;
+    mediaRecorderRef.current?.stop();
+    setIsRecording(false);
+  };
+
+  const transcribeAudio = async (audioBlob: Blob) => {
+    const formData = new FormData();
+    formData.append("file", audioBlob, "recording.webm");
+    try {
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Transcription failed");
+      }
+      const data = await response.json();
+      // Set the transcribed text as input so user can edit or send
+      setInput(data.text);
+    } catch (error) {
+      console.error("Error transcribing audio:", error);
     }
   };
 
@@ -115,68 +206,18 @@ const InputForm: React.FC<Props> = ({
   return (
     <div className="fixed bottom-0 w-full flex flex-col items-center space-y-3 bg-gradient-to-b from-transparent via-gray-100 to-gray-100 p-5 pb-3 sm:px-0">
       <div className="w-full max-w-screen-md flex flex-col items-stretch">
-        {/* Display file "chips" */}
-        <div className="flex flex-wrap items-center space-x-2 mb-2">
-          {chatFileDetails.map((file) => (
-            <div key={file.name} className="flex items-center space-x-1">
-              {file.type.startsWith('image') ? (
-                <ImageIcon className="h-3 w-3" />
-              ) : (
-                <DocumentIcon className="h-3 w-3" />
-              )}
-              <span className="text-xs text-gray-500">{file.name}</span>
-              <button
-                type="button"
-                onClick={() => removeChatFile(file.name)}
-                className="text-gray-500 hover:text-gray-700"
-                disabled={isSending}
-              >
-                <XIcon className="h-4 w-4 text-gray-500" />
-              </button>
-            </div>
-          ))}
-        </div>
-
-        {/* Flex row: EndChat button + Text input + Send button */}
-        <div className="flex items-center space-x-2">
-          
+        {/* ...other UI elements... */}
+        <div className="flex items-center space-x-2 relative">
           {/* End Chat Button */}
           <button
             type="button"
-            onClick={() => setIsDialogOpen(true)}
+            onClick={() => {/* open dialog to end chat */}}
             className="p-2 bg-red-500 text-white rounded-md hover:bg-red-600"
           >
             End Chat
           </button>
 
-          {/* Confirmation Dialog */}
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Confirm End Chat</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to end the chat? Any unsaved information will be lost.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <button
-                  type="button"
-                  onClick={confirmEndChat}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Yes, End Chat
-                </button>
-                <button
-                  type="button"
-                  onClick={cancelEndChat}
-                  className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-                >
-                  No, Continue Chat
-                </button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
+          {/* Message Input Form */}
           <form
             ref={formRef}
             onSubmit={handleFormSubmit}
@@ -201,7 +242,6 @@ const InputForm: React.FC<Props> = ({
               className="w-full h-8 resize-none p-1 focus:outline-none"
               disabled={disabled || !chatStarted}
             />
-
             <button
               className={clsx(
                 'flex h-8 w-8 items-center justify-center rounded-md transition-all',
@@ -223,6 +263,67 @@ const InputForm: React.FC<Props> = ({
               )}
             </button>
           </form>
+
+          {/* Speaker Toggle Button with indicator */}
+          <button
+            type="button"
+            onClick={() => setIsSpeakerOn(!isSpeakerOn)}
+            className={clsx(
+              'flex h-8 w-8 items-center justify-center rounded-md relative transition-all',
+              isSpeakerOn ? 'bg-purple-500 hover:bg-purple-600' : 'bg-gray-500 hover:bg-gray-600',
+              'text-white'
+            )}
+            disabled={disabled || !chatStarted || isSending}
+          >
+            {isSpeakerOn ? (
+              <span role="img" aria-label="Speaker On">🔊</span>
+            ) : (
+              <span role="img" aria-label="Speaker Off">🔇</span>
+            )}
+            {/* Show a small spinner or pulsing dot when voice is active */}
+            {isSpeaking && (
+              <span className="absolute -top-1 -right-1 h-2 w-2 bg-yellow-400 rounded-full animate-ping"></span>
+            )}
+          </button>
+
+          {/* Microphone Button */}
+          <button
+            type="button"
+            onClick={isRecording ? undefined : startRecording}
+            className={clsx(
+              'flex h-8 w-8 items-center justify-center rounded-md transition-all',
+              isRecording ? 'bg-gray-400 cursor-default' : 'bg-blue-500 hover:bg-blue-600',
+              'text-white'
+            )}
+            disabled={disabled || !chatStarted || isSending}
+          >
+            {isRecording ? (
+              <span className="text-white text-xs">Recording</span>
+            ) : (
+              <span className="text-white text-xs">Mic</span>
+            )}
+          </button>
+
+          {/* Recording Options Overlay */}
+          {isRecording && (
+            <div className="absolute bottom-12 right-0 flex flex-col items-end bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+              <p className="mb-2 text-sm font-medium text-red-500">Recording...</p>
+              <div className="flex space-x-2">
+                <button
+                  onClick={deleteRecording}
+                  className="px-3 py-1 text-sm text-white bg-gray-500 rounded hover:bg-gray-600"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={approveRecording}
+                  className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
+                >
+                  Approve
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

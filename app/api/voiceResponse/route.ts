@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+let currentAudio: HTMLAudioElement | null = null;
+
 export async function POST(request: NextRequest) {
   try {
     const { message } = await request.json();
@@ -47,3 +49,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }
+
+export const playVoiceResponse = async (text: string): Promise<void> => {
+  try {
+    const response = await fetch('/api/voiceResponse', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text }),
+    });
+    if (!response.ok) throw new Error('Voice response API failed');
+    const audioData = await response.arrayBuffer();
+    const audioBlob = new Blob([audioData], { type: 'audio/mpeg' });
+    const url = URL.createObjectURL(audioBlob);
+    // Stop any currently playing audio
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      URL.revokeObjectURL(currentAudio.src);
+      currentAudio = null;
+    }
+    currentAudio = new Audio(url);
+    return new Promise<void>((resolve) => {
+      currentAudio!.onended = () => {
+         resolve();
+      };
+      currentAudio!.play();
+    });
+  } catch (error) {
+    console.error('Error playing voice response:', error);
+  }
+};
