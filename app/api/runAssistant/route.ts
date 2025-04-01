@@ -39,7 +39,8 @@ export async function POST(req: NextRequest) {
     // This step is crucial for initiating the interaction with the AI assistant.
     const run = await openai.beta.threads.runs.create(threadId, {
       assistant_id: assistantId,
-      model: 'o3-mini'
+      model: 'o3-mini',
+      reasoning_effort: "low"
     });
 
     // Logging the details of the created run for debugging. This includes the run ID and any other relevant information.
