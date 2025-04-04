@@ -2,7 +2,6 @@
 import { useState, useRef } from 'react';
 import ChatManager from '../services/ChatManager';
 
-
 type FileDetail = {
   name: string;
   type: string;
@@ -11,7 +10,7 @@ type FileDetail = {
 
 export const useChatState = () => {
   
-  const [initialThreadMessage, setInitialThreadMessage] = useState('Introduce with the purpose of the interview and also the overview of the interview process.');
+  const [initialThreadMessage, setInitialThreadMessage] = useState('Introduce yourself with a short introduction and go on with the first question.');
   
   const [assistantName, setAssistantName] = useState('');
   const [assistantModel, setAssistantModel] = useState('gpt-o3-mini');
